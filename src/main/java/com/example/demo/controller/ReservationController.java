@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 public class ReservationController {
 
@@ -18,6 +17,7 @@ public class ReservationController {
 
     @GetMapping("reservations")
     public List<Reservation> search(){
+        System.out.println("get reservations list successfully");
         return (List<Reservation>) this.service.search();
     }
 
