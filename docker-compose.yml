@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: reservations_database
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: reservations
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 12345678
+    volumes:
+      - reservations_volume:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - reservations_network
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.0-apache
+    container_name: phpmyadmin
+    environment:
+      PMA_ARBITRARY: 1
+    ports:
+      - "8080:80"
+    networks:
+      - reservations_network
+    restart: unless-stopped
+
+  reservation-service:
+    build: .
+    container_name: reservation_service
+    ports:
+      - "80:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://reservations_database:3306/reservations
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: 12345678
+    networks:
+      - reservations_network
+    depends_on:
+      - mysql
+    restart: unless-stopped
+
+networks:
+  reservations_network:
+
+volumes:
+  reservations_volume:
